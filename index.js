@@ -1,5 +1,6 @@
 const express=require('express');
 const app=express();
+ const connect=require('./config/db-config')
 
 const http=require('http')
 const server = http.createServer(app);
@@ -20,12 +21,14 @@ io.on('connection', (socket) => {
     socket.on('chat message', (msg) => {
           console.log('message: ' + msg);
 
-          io.emit('chat message', msg)
+          io.emit('chat message',socket.id+'--'+msg)
         })
 
    
   });
 
-server.listen(3000,()=>{
+server.listen(3000,async()=>{
     console.log('listening on port 3000');
+    await connect();
+    console.log('DB connected')
 })
