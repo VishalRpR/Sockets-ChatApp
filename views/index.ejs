@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Hi there</h1>
+    <h1>Chatting.... Inside <%= groupname %> </h1>
+    <input id="input" type="text">
+    <button id="button">click</button>
+    <ul id="list">
+        <% for (let i = 0; i < previousmsgs.length; i++) {%>
+            <li> <%= previousmsgs[i].sender %> - <%= previousmsgs[i].content %> </li>
+         <% } %> 
+    </ul>
+    
+<script src='/socket.io/socket.io.js'></script>
+<script>
+    console.log("Welcome to sockets")
+    const socket=io();
+
+    const input=document.getElementById('input');
+    const button=document.getElementById('button');
+    const list=document.getElementById('list');
+
+    socket.emit('join room',{
+        roomid:'<%= roomid %>'
+    })
+
+button.addEventListener('click',()=>{
+    if (input.value) {
+        const msg=input.value;
+        socket.emit('chat message', {
+            message:msg,
+            roomid:'<%= roomid %>',
+            sender:'<%= user %>'
+        });
+        input.value = '';
+      }
+})
+
+
+socket.on('chat message',(data)=>{
+   const item=document.createElement('li');
+   item.textContent=data.sender+'-'+data.message;
+   list.appendChild(item);
+}
+
+)
+</script>
+</body>
+</html>
